@@ -23,3 +23,6 @@ jobs:
 
       - name: Test app
         run: echo "Pipeline working 🚀"
+        
+      - name: Build Docker Image
+        run: docker build -t flask-app .
