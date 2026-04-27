@@ -31,7 +31,7 @@ jobs:
         run: |
           docker run -d -p 5000:5000 ${{ secrets.DOCKER_USERNAME }}/flask-app:${{ github.sha }}
           sleep 5
-          curl --fail http://localhost:5000
+          curl --fail http://localhost:5000/
 
       # 👇 Push only if test passes
       - name: Push image
