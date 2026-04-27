@@ -1,0 +1,20 @@
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    env_file:
+      - .env
+  redis:
+    image: "redis:alpine"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
