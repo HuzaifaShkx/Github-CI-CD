@@ -23,16 +23,19 @@ jobs:
         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/flask-app:${{ github.sha }} .
 
       # 👇 Start Redis container (fixes your 500 error)
-      - name: Run Redis
-        run: docker run -d -p 6379:6379 redis:7
+      - name: Create network
+        run: docker network create test-net
 
-      # 👇 Run and test your Flask app
+      - name: Run Redis
+        run: docker run -d --name redis --network test-net redis:7
+
       - name: Test app
         run: |
-          docker run -d -p 5000:5000 ${{ secrets.DOCKER_USERNAME }}/flask-app:${{ github.sha }}
+          docker run -d --network test-net -p 5000:5000 \
+          -e REDIS_HOST=redis \
+          ${{ secrets.DOCKER_USERNAME }}/flask-app:${{ github.sha }}
           sleep 5
-          curl --fail http://localhost:5000/
-
+          curl --fail http://localhost:5000
       # 👇 Push only if test passes
       - name: Push image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/flask-app:${{ github.sha }}
